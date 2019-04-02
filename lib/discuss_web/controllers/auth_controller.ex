@@ -28,6 +28,13 @@ defmodule DiscussWeb.AuthController do
     end
   end
 
+  def signout(conn, _params) do
+    conn
+    |> put_flash(:info, "Sign Out successfully!")
+    |> clear_session()
+    |> redirect(to: Routes.topic_path(conn, :index))
+  end
+
   defp insert_or_update_user(changeset) do
     case Repo.get_by(User, email: changeset.changes.email) do
       nil ->
