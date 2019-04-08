@@ -12,8 +12,9 @@ defmodule Discuss.Topics do
     Topic.changeset(topic, %{})
   end
 
-  def create_topic(attrs \\ %{}) do
-    %Topic{}
+  def create_topic(attrs \\ %{}, conn) do
+    conn.assigns.user
+    |> Ecto.build_assoc(:topics)
     |> Topic.changeset(attrs)
     |> Repo.insert()
   end
@@ -28,6 +29,10 @@ defmodule Discuss.Topics do
 
   def delete_topic(%Topic{} = topic) do
     Repo.delete(topic)
+  end
+
+  def check_topic_owner(topic_id, conn) do
+    Repo.get(Topic, topic_id).user_id == conn.assigns.user.id
   end
 
 end

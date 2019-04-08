@@ -4,7 +4,24 @@ defmodule DiscussWeb.TopicController do
 	alias Discuss.Topics
 	alias Discuss.Topics.Topic
 
-	def index(conn, _params) do
+	plug DiscussWeb.Plugs.RequireAuth when action in [:new, :create, :edit, :update, :delete]
+	plug :check_topic_owner when action in [:edit, :update, :delete]
+
+	def check_topic_owner(conn, _params) do
+		%{params: %{"id" => topic_id}} = conn
+
+		case Topics.check_topic_owner(topic_id, conn) do
+			true ->
+				conn
+			false ->
+				conn
+				|> put_flash(:error, "You cannot edit that")
+				|> redirect(to: Routes.topic_path(conn, :index))
+				|> halt()
+		end
+	end
+
+	def index(conn, _params)    do
 		topics = Topics.list_topics()
 		render(conn, "index.html", topics: topics)
 	end
@@ -15,7 +32,7 @@ defmodule DiscussWeb.TopicController do
 	end
 
 	def create(conn, %{"topic" => topic_params}) do
-		case Topics.create_topic(topic_params) do
+		case Topics.create_topic(topic_params, conn) do
       {:ok, _topic} ->
         conn
         |> put_flash(:info, "Topic created successfully.")
@@ -55,7 +72,7 @@ defmodule DiscussWeb.TopicController do
         |> put_flash(:info, "Topic deleted successfully.")
 				|> redirect(to: Routes.topic_path(conn, :index))
 
-			{:error, %Ecto.Changeset{} = changeset} ->
+			{:error, %Ecto.Changeset{} = _changeset} ->
 				render(conn, "index.html", {})
     end
 	end
