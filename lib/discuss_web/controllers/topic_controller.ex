@@ -23,6 +23,7 @@ defmodule DiscussWeb.TopicController do
 
 	def index(conn, _params)    do
 		topics = Topics.list_topics()
+		IO.inspect(conn.assigns.user)
 		render(conn, "index.html", topics: topics)
 	end
 
@@ -42,6 +43,11 @@ defmodule DiscussWeb.TopicController do
         render(conn, "new.html", changeset: changeset)
     end
 	end
+
+	def show(conn, %{"id" => id}) do
+    topic = Topics.get_topic!(id)
+    render(conn, "show.html", topic: topic)
+  end
 
 	def edit(conn, %{"id" => id}) do
 		topic = Topics.get_topic!(id)

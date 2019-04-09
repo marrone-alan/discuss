@@ -16,7 +16,7 @@
         Discussions
         </a>
         <ul class="right">
-          <%= if @conn.assigns[:user] do %>
+          <%= if @conn.assigns[:user].id != nil do %>
             <li>
               <%= link "Sign Out", to: Routes.auth_path(@conn, :signout) %>
             </li>

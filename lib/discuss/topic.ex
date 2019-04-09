@@ -2,7 +2,7 @@ defmodule Discuss.Topics do
   import Ecto.Query, warn: false
   alias Discuss.Repo
 
-  alias Discuss.Topics.Topic
+  alias Discuss.Topics.{Topic, Comment}
 
   def list_topics do
     Repo.all(Topic)
@@ -16,6 +16,13 @@ defmodule Discuss.Topics do
     conn.assigns.user
     |> Ecto.build_assoc(:topics)
     |> Topic.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def add_comment(topic, content) do
+    topic
+    |> Ecto.build_assoc(:comments)
+    |> Comment.changeset(%{content: content})
     |> Repo.insert()
   end
 
