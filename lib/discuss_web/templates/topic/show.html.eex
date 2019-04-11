@@ -1,11 +1,9 @@
 <h5><%= @topic.title %></h5>
 
 <div class="input-field">
-  <textarea class="materialize-textarea"></textarea>
-  <button class="btn">Add Comment</button>
+  <input placeholder="Press Enter to send the message" type="text" class="materialize-textarea"></input>
 <div>
-
-
+<div class="collection"></div>
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {

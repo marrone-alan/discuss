@@ -19,14 +19,18 @@ defmodule Discuss.Topics do
     |> Repo.insert()
   end
 
-  def add_comment(topic, content) do
+  def add_comment(topic, content, user_id) do
     topic
-    |> Ecto.build_assoc(:comments)
+    |> Ecto.build_assoc(:comments, user_id: user_id)
     |> Comment.changeset(%{content: content})
     |> Repo.insert()
   end
 
-  def get_topic!(id), do: Repo.get!(Topic, id)
+  def get_topic!(id) do
+    Topic 
+    |> Repo.get!(id)
+    |> Repo.preload(comments: [:user])
+  end
 
   def update_topic(%Topic{} = topic, attrs) do
     topic
